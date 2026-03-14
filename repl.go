@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
-	"slices"
 	"strings"
 )
 
@@ -11,6 +11,34 @@ type cliCommand struct {
 	name        string
 	description string
 	callback    func() error
+}
+
+func startRepl() {
+	scanner := bufio.NewScanner(os.Stdin)
+	for {
+		fmt.Print("Pokedex > ")
+
+		scanner.Scan()
+		newInputText := scanner.Text()
+		cleanedInput := cleanInput(newInputText)
+
+		if len(cleanedInput) == 0 {
+			continue
+		}
+
+		commandName := cleanedInput[0]
+
+		c, ok := getCommands()[commandName]
+		if !ok {
+			fmt.Println("Unknown command")
+			continue
+		}
+
+		err := c.callback()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 }
 
 func cleanInput(text string) []string {
@@ -24,31 +52,6 @@ func cleanInput(text string) []string {
 	}
 
 	return inputCleaned
-}
-
-func commandExit() error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
-	return nil
-}
-
-func commandHelp() error {
-	fmt.Println("Welcome to the Pokedex!")
-	fmt.Println("Usage:")
-	fmt.Println()
-
-	commandNames := make([]string, 0, len(getCommands()))
-	for name := range getCommands() {
-		commandNames = append(commandNames, name)
-	}
-	slices.Sort(commandNames)
-
-	for _, name := range commandNames {
-		command := getCommands()[name]
-		fmt.Printf("%s: %s\n", command.name, command.description)
-	}
-
-	return nil
 }
 
 func getCommands() map[string]cliCommand {
