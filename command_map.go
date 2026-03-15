@@ -63,13 +63,16 @@ type locationAreaAPIResponse struct {
 	} `json:"pokemon_encounters"`
 }
 
-func commandMap() error {
+var startRange = 1
 
+func commandMap() error {
 	limit := 20
+	endRange := startRange + limit - 1
+
 	client := &http.Client{Timeout: 3 * time.Second}
 
-	for i := 0; i < limit; i++ {
-		fullURL := locationsAreas + "/" + strconv.Itoa(i+1)
+	for i := startRange; i <= endRange; i++ {
+		fullURL := locationsAreas + "/" + strconv.Itoa(i)
 
 		req, err := http.NewRequest(http.MethodGet, fullURL, nil)
 		if err != nil {
@@ -87,6 +90,7 @@ func commandMap() error {
 		}
 
 		resp.Body.Close()
+		startRange += limit
 
 		fmt.Println(location.Location.Name)
 	}
