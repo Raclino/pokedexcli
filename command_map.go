@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-const locationsAreas = "https://pokeapi.co/api/v2/location-area"
-
 type locationAreaAPIResponse struct {
 	EncounterMethodRates []struct {
 		EncounterMethod struct {
@@ -63,13 +61,27 @@ type locationAreaAPIResponse struct {
 	} `json:"pokemon_encounters"`
 }
 
+const locationsAreas = "https://pokeapi.co/api/v2/location-area"
+const limit = 20
+
+var client = &http.Client{Timeout: 3 * time.Second}
 var startRange = 1
 
 func commandMap() error {
-	limit := 20
 	endRange := startRange + limit - 1
+	fetchLocationsNames(client, startRange, endRange)
+	startRange += limit
+	return nil
+}
 
-	client := &http.Client{Timeout: 3 * time.Second}
+func commandMapb() error {
+	startRange -= limit * 2
+	endRange := startRange + limit - 1
+	fetchLocationsNames(client, startRange, endRange)
+	return nil
+}
+
+func fetchLocationsNames(client *http.Client, startRange, endRange int) error {
 
 	for i := startRange; i <= endRange; i++ {
 		fullURL := locationsAreas + "/" + strconv.Itoa(i)
@@ -90,10 +102,8 @@ func commandMap() error {
 		}
 
 		resp.Body.Close()
-		startRange += limit
 
 		fmt.Println(location.Location.Name)
 	}
-
 	return nil
 }
