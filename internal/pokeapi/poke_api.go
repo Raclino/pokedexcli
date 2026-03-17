@@ -7,6 +7,11 @@ import (
 	"strconv"
 )
 
+type Config struct {
+	Next     string
+	Previous string
+}
+
 type locationAreaAPIResponse struct {
 	EncounterMethodRates []struct {
 		EncounterMethod struct {
@@ -60,12 +65,12 @@ type locationAreaAPIResponse struct {
 	} `json:"pokemon_encounters"`
 }
 
-const locationsAreas = "https://pokeapi.co/api/v2/location-area"
+const LocationsAreas string = "https://pokeapi.co/api/v2/location-area/"
 
-func FetchLocationsNames(client *http.Client, startRange, endRange int) error {
+func FetchLocationsNames(client *http.Client, config *Config, startRange, endRange int) error {
 
 	for i := startRange; i <= endRange; i++ {
-		fullURL := locationsAreas + "/" + strconv.Itoa(i)
+		fullURL := LocationsAreas + strconv.Itoa(i)
 
 		req, err := http.NewRequest(http.MethodGet, fullURL, nil)
 		if err != nil {
@@ -77,14 +82,14 @@ func FetchLocationsNames(client *http.Client, startRange, endRange int) error {
 			return fmt.Errorf("failed to fetch page %d: %w", i+1, err)
 		}
 
-		location := locationAreaAPIResponse{}
-		if err := json.NewDecoder(resp.Body).Decode(&location); err != nil {
+		locationResponse := locationAreaAPIResponse{}
+		if err := json.NewDecoder(resp.Body).Decode(&locationResponse); err != nil {
 			return fmt.Errorf("Couldn't decode response body: %w", err)
 		}
 
 		resp.Body.Close()
 
-		fmt.Println(location.Location.Name)
+		fmt.Println(locationResponse.Location.Name)
 	}
 	return nil
 }

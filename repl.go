@@ -4,22 +4,20 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
+
+	"github.com/Raclino/pokedexcli/internal/pokeapi"
 )
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*Config) error
-}
-
-type Config struct {
-	Next     string
-	Previous string
+	callback    func(*pokeapi.Config) error
 }
 
 func startRepl() {
-	urlsConfig := &Config{}
+	urlsConfig := &pokeapi.Config{Previous: pokeapi.LocationsAreas + strconv.Itoa(1)}
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {

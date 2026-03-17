@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"slices"
+
+	"github.com/Raclino/pokedexcli/internal/pokeapi"
 )
 
-func commandHelp(config *Config) error {
+func commandHelp(config *pokeapi.Config) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
