@@ -4,13 +4,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 )
 
 type LocationAreaConfig struct {
 	Next     string
 	Previous string
 }
+
+type NamedAPIResource struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
 type LocationAreasResponse struct {
 	Count    int                `json:"count"`
 	Next     *string            `json:"next"`
@@ -18,90 +23,28 @@ type LocationAreasResponse struct {
 	Results  []NamedAPIResource `json:"results"`
 }
 
-type NamedAPIResource struct {
-	Name string `json:"name"`
-	URL  string `json:"url"`
-}
-type locationAreaAPIResponse struct {
-	EncounterMethodRates []struct {
-		EncounterMethod struct {
-			Name string `json:"name"`
-			URL  string `json:"url"`
-		} `json:"encounter_method"`
-		VersionDetails []struct {
-			Rate    int `json:"rate"`
-			Version struct {
-				Name string `json:"name"`
-				URL  string `json:"url"`
-			} `json:"version"`
-		} `json:"version_details"`
-	} `json:"encounter_method_rates"`
-	GameIndex int `json:"game_index"`
-	ID        int `json:"id"`
-	Location  struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"location"`
-	Name  string `json:"name"`
-	Names []struct {
-		Language struct {
-			Name string `json:"name"`
-			URL  string `json:"url"`
-		} `json:"language"`
-		Name string `json:"name"`
-	} `json:"names"`
-	PokemonEncounters []struct {
-		Pokemon struct {
-			Name string `json:"name"`
-			URL  string `json:"url"`
-		} `json:"pokemon"`
-		VersionDetails []struct {
-			EncounterDetails []struct {
-				Chance          int   `json:"chance"`
-				ConditionValues []any `json:"condition_values"`
-				MaxLevel        int   `json:"max_level"`
-				Method          struct {
-					Name string `json:"name"`
-					URL  string `json:"url"`
-				} `json:"method"`
-				MinLevel int `json:"min_level"`
-			} `json:"encounter_details"`
-			MaxChance int `json:"max_chance"`
-			Version   struct {
-				Name string `json:"name"`
-				URL  string `json:"url"`
-			} `json:"version"`
-		} `json:"version_details"`
-	} `json:"pokemon_encounters"`
-}
-
 const LocationsAreas string = "https://pokeapi.co/api/v2/location-area/"
 
-func GetLocationAreas(client *http.Client, config *LocationAreaConfig, startRange, endRange int) error {
-
-	for i := startRange; i <= endRange; i++ {
-		fullURL := LocationsAreas + strconv.Itoa(i)
-
-		req, err := http.NewRequest(http.MethodGet, fullURL, nil)
-		if err != nil {
-			return fmt.Errorf("failed to create request for %s: %w", fullURL, err)
-		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			return fmt.Errorf("failed to fetch page %d: %w", i+1, err)
-		}
-
-		if resp.StatusCode != http.StatusOK {
-			return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-		}
-		locationResponse := locationAreaAPIResponse{}
-		if err := json.NewDecoder(resp.Body).Decode(&locationResponse); err != nil {
-			return fmt.Errorf("Couldn't decode response body: %w", err)
-		}
-		defer resp.Body.Close()
-
-		fmt.Println(locationResponse.Location.Name)
+func GetLocationAreas(client *http.Client, url string) (*LocationAreasResponse, error) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request for %s: %w", url, err)
 	}
-	return nil
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch location areas: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	locationAreasResponse := LocationAreasResponse{}
+	if err := json.NewDecoder(resp.Body).Decode(&locationAreasResponse); err != nil {
+		return nil, fmt.Errorf("couldn't decode response body: %w", err)
+	}
+
+	return &locationAreasResponse, nil
 }

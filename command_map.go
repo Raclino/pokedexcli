@@ -3,41 +3,63 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/Raclino/pokedexcli/internal/pokeapi"
 )
 
-const limit = 20
-
 var client = &http.Client{Timeout: 3 * time.Second}
-var startRange = 1
 
 func commandMap(config *pokeapi.LocationAreaConfig) error {
-	endRange := startRange + limit - 1
-	config.Next = pokeapi.LocationsAreas + strconv.Itoa(endRange)
-	fmt.Printf("PreviousLink: %s, NextLink: %s \n", config.Previous, config.Next)
-
-	err := pokeapi.GetLocationAreas(client, config, startRange, endRange)
+	resp, err := pokeapi.GetLocationAreas(client, config.Next)
 	if err != nil {
 		return err
 	}
 
-	startRange += limit
-	config.Previous = pokeapi.LocationsAreas + strconv.Itoa(startRange)
+	for _, area := range resp.Results {
+		fmt.Println(area.Name)
+	}
+
+	if resp.Next != nil {
+		config.Next = *resp.Next
+	} else {
+		config.Next = ""
+	}
+
+	if resp.Previous != nil {
+		config.Previous = *resp.Previous
+	} else {
+		config.Previous = ""
+	}
 
 	return nil
 }
 
 func commandMapb(config *pokeapi.LocationAreaConfig) error {
-	fmt.Println(*config)
-	startRange -= limit * 2
-	endRange := startRange + limit - 1
+	if config.Previous == "" {
+		fmt.Println("you're on the first page")
+		return nil
+	}
 
-	err := pokeapi.GetLocationAreas(client, config, startRange, endRange)
+	resp, err := pokeapi.GetLocationAreas(client, config.Previous)
 	if err != nil {
 		return err
+	}
+
+	for _, area := range resp.Results {
+		fmt.Println(area.Name)
+	}
+
+	if resp.Next != nil {
+		config.Next = *resp.Next
+	} else {
+		config.Next = ""
+	}
+
+	if resp.Previous != nil {
+		config.Previous = *resp.Previous
+	} else {
+		config.Previous = ""
 	}
 
 	return nil
