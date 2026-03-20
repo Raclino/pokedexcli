@@ -14,12 +14,12 @@ const limit = 20
 var client = &http.Client{Timeout: 3 * time.Second}
 var startRange = 1
 
-func commandMap(config *pokeapi.Config) error {
+func commandMap(config *pokeapi.LocationAreaConfig) error {
 	endRange := startRange + limit - 1
 	config.Next = pokeapi.LocationsAreas + strconv.Itoa(endRange)
 	fmt.Printf("PreviousLink: %s, NextLink: %s \n", config.Previous, config.Next)
 
-	err := pokeapi.FetchLocationsNames(client, config, startRange, endRange)
+	err := pokeapi.GetLocationAreas(client, config, startRange, endRange)
 	if err != nil {
 		return err
 	}
@@ -30,12 +30,12 @@ func commandMap(config *pokeapi.Config) error {
 	return nil
 }
 
-func commandMapb(config *pokeapi.Config) error {
+func commandMapb(config *pokeapi.LocationAreaConfig) error {
 	fmt.Println(*config)
 	startRange -= limit * 2
 	endRange := startRange + limit - 1
 
-	err := pokeapi.FetchLocationsNames(client, config, startRange, endRange)
+	err := pokeapi.GetLocationAreas(client, config, startRange, endRange)
 	if err != nil {
 		return err
 	}

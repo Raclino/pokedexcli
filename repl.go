@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/Raclino/pokedexcli/internal/pokeapi"
@@ -13,11 +12,14 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*pokeapi.Config) error
+	callback    func(*pokeapi.LocationAreaConfig) error
 }
 
 func startRepl() {
-	urlsConfig := &pokeapi.Config{Previous: pokeapi.LocationsAreas + strconv.Itoa(1)}
+	urlsConfig := &pokeapi.LocationAreaConfig{
+		Next:     pokeapi.LocationsAreas,
+		Previous: "",
+	}
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -47,16 +49,7 @@ func startRepl() {
 }
 
 func cleanInput(text string) []string {
-	trimmedText := strings.TrimSpace(text)
-	loweredText := strings.ToLower(trimmedText)
-
-	inputCleaned := []string{}
-
-	for w := range strings.FieldsSeq(loweredText) {
-		inputCleaned = append(inputCleaned, w)
-	}
-
-	return inputCleaned
+	return strings.Fields(strings.ToLower(strings.TrimSpace(text)))
 }
 
 func getCommands() map[string]cliCommand {

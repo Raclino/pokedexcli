@@ -7,11 +7,21 @@ import (
 	"strconv"
 )
 
-type Config struct {
+type LocationAreaConfig struct {
 	Next     string
 	Previous string
 }
+type LocationAreasResponse struct {
+	Count    int                `json:"count"`
+	Next     *string            `json:"next"`
+	Previous *string            `json:"previous"`
+	Results  []NamedAPIResource `json:"results"`
+}
 
+type NamedAPIResource struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
 type locationAreaAPIResponse struct {
 	EncounterMethodRates []struct {
 		EncounterMethod struct {
@@ -67,7 +77,7 @@ type locationAreaAPIResponse struct {
 
 const LocationsAreas string = "https://pokeapi.co/api/v2/location-area/"
 
-func FetchLocationsNames(client *http.Client, config *Config, startRange, endRange int) error {
+func GetLocationAreas(client *http.Client, config *LocationAreaConfig, startRange, endRange int) error {
 
 	for i := startRange; i <= endRange; i++ {
 		fullURL := LocationsAreas + strconv.Itoa(i)
@@ -82,12 +92,14 @@ func FetchLocationsNames(client *http.Client, config *Config, startRange, endRan
 			return fmt.Errorf("failed to fetch page %d: %w", i+1, err)
 		}
 
+		if resp.StatusCode != http.StatusOK {
+			return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		}
 		locationResponse := locationAreaAPIResponse{}
 		if err := json.NewDecoder(resp.Body).Decode(&locationResponse); err != nil {
 			return fmt.Errorf("Couldn't decode response body: %w", err)
 		}
-
-		resp.Body.Close()
+		defer resp.Body.Close()
 
 		fmt.Println(locationResponse.Location.Name)
 	}
