@@ -13,11 +13,11 @@ func TestAddGet(t *testing.T) {
 		val []byte
 	}{
 		{
-			key: "https://example.com",
+			key: "https://google.com",
 			val: []byte("testdata"),
 		},
 		{
-			key: "https://example.com/path",
+			key: "https://google.com/path",
 			val: []byte("moretestdata"),
 		},
 	}
@@ -43,9 +43,9 @@ func TestReapLoop(t *testing.T) {
 	const baseTime = 5 * time.Millisecond
 	const waitTime = baseTime + 5*time.Millisecond
 	cache := NewCache(baseTime)
-	cache.Add("https://example.com", []byte("testdata"))
+	cache.Add("https://google.com", []byte("testdata"))
 
-	_, ok := cache.Get("https://example.com")
+	_, ok := cache.Get("https://google.com")
 	if !ok {
 		t.Errorf("expected to find key")
 		return
@@ -53,7 +53,7 @@ func TestReapLoop(t *testing.T) {
 
 	time.Sleep(waitTime)
 
-	_, ok = cache.Get("https://example.com")
+	_, ok = cache.Get("https://google.com")
 	if ok {
 		t.Errorf("expected to not find key")
 		return

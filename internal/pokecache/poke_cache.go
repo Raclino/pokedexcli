@@ -49,7 +49,7 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 }
 
 func (c *Cache) readLoop(interval time.Duration) {
-	ticker := time.NewTicker(interval * time.Second)
+	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
 	for range ticker.C {
