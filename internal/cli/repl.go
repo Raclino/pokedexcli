@@ -15,7 +15,7 @@ type cliCommand struct {
 	callback    func(*pokeapi.LocationAreaConfig) error
 }
 
-func startRepl() {
+func StartRepl() {
 	urlsConfig := &pokeapi.LocationAreaConfig{
 		Next:     pokeapi.LocationsAreas,
 		Previous: "",
