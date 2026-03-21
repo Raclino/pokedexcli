@@ -6,20 +6,13 @@ import (
 	"time"
 
 	"github.com/Raclino/pokedexcli/internal/pokeapi"
+	"github.com/Raclino/pokedexcli/internal/pokecache"
 )
 
 var client = &http.Client{Timeout: 3 * time.Second}
+var cache = pokecache.NewCache(5 * time.Second)
 
-func commandMap(config *pokeapi.LocationAreaConfig) error {
-	resp, err := pokeapi.GetLocationAreas(client, config.Next)
-	if err != nil {
-		return err
-	}
-
-	for _, area := range resp.Results {
-		fmt.Println(area.Name)
-	}
-
+func updateConfigFromResponse(config *pokeapi.LocationAreaConfig, resp *pokeapi.LocationAreasResponse) {
 	if resp.Next != nil {
 		config.Next = *resp.Next
 	} else {
@@ -31,7 +24,19 @@ func commandMap(config *pokeapi.LocationAreaConfig) error {
 	} else {
 		config.Previous = ""
 	}
+}
 
+func commandMap(config *pokeapi.LocationAreaConfig) error {
+	resp, err := pokeapi.GetLocationAreas(client, cache, config.Next)
+	if err != nil {
+		return err
+	}
+
+	for _, area := range resp.Results {
+		fmt.Println(area.Name)
+	}
+
+	updateConfigFromResponse(config, resp)
 	return nil
 }
 
@@ -41,7 +46,7 @@ func commandMapb(config *pokeapi.LocationAreaConfig) error {
 		return nil
 	}
 
-	resp, err := pokeapi.GetLocationAreas(client, config.Previous)
+	resp, err := pokeapi.GetLocationAreas(client, cache, config.Previous)
 	if err != nil {
 		return err
 	}
@@ -50,17 +55,6 @@ func commandMapb(config *pokeapi.LocationAreaConfig) error {
 		fmt.Println(area.Name)
 	}
 
-	if resp.Next != nil {
-		config.Next = *resp.Next
-	} else {
-		config.Next = ""
-	}
-
-	if resp.Previous != nil {
-		config.Previous = *resp.Previous
-	} else {
-		config.Previous = ""
-	}
-
+	updateConfigFromResponse(config, resp)
 	return nil
 }

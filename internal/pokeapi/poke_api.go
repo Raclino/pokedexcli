@@ -3,7 +3,10 @@ package pokeapi
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+
+	"github.com/Raclino/pokedexcli/internal/pokecache"
 )
 
 type LocationAreaConfig struct {
@@ -25,25 +28,38 @@ type LocationAreasResponse struct {
 
 const LocationsAreas string = "https://pokeapi.co/api/v2/location-area/"
 
-func GetLocationAreas(client *http.Client, url string) (*LocationAreasResponse, error) {
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create request for %s: %w", url, err)
-	}
+func GetLocationAreas(client *http.Client, cache *pokecache.Cache, url string) (*LocationAreasResponse, error) {
+	var body []byte
+	var ok bool
 
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch location areas: %w", err)
-	}
-	defer resp.Body.Close()
+	body, ok = cache.Get(url)
+	if !ok {
+		req, err := http.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create request for %s: %w", url, err)
+		}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		resp, err := client.Do(req)
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch location areas: %w", err)
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		}
+
+		body, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read response body: %w", err)
+		}
+
+		cache.Add(url, body)
 	}
 
 	locationAreasResponse := LocationAreasResponse{}
-	if err := json.NewDecoder(resp.Body).Decode(&locationAreasResponse); err != nil {
-		return nil, fmt.Errorf("couldn't decode response body: %w", err)
+	if err := json.Unmarshal(body, &locationAreasResponse); err != nil {
+		return nil, fmt.Errorf("couldn't unmarshal response body: %w", err)
 	}
 
 	return &locationAreasResponse, nil
