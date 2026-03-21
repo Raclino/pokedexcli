@@ -9,6 +9,7 @@ import (
 	"github.com/Raclino/pokedexcli/internal/pokecache"
 )
 
+// TODO: voir pour refacto via une appConfig global dans repl.go et update les signatrues des callbacks func
 var client = &http.Client{Timeout: 3 * time.Second}
 var cache = pokecache.NewCache(5 * time.Second)
 
