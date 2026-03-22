@@ -7,7 +7,7 @@ import (
 	"github.com/Raclino/pokedexcli/internal/pokeapi"
 )
 
-func commandHelp(config *pokeapi.LocationAreaConfig) error {
+func commandHelp(config *pokeapi.LocationAreaConfig, args ...string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()

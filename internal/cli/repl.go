@@ -12,7 +12,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*pokeapi.LocationAreaConfig) error
+	callback    func(config *pokeapi.LocationAreaConfig, args ...string) error
 }
 
 func StartRepl() {
@@ -41,7 +41,7 @@ func StartRepl() {
 			continue
 		}
 
-		err := c.callback(urlsConfig)
+		err := c.callback(urlsConfig, cleanedInput...)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -73,6 +73,12 @@ func getCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Displays the previous names of 20 location areas in the Pokemon world.",
 			callback:    commandMapb,
+		},
+
+		"explore": {
+			name:        "explore",
+			description: "Displays the list of Pokemon's at  a location.",
+			callback:    commandExplore,
 		},
 	}
 }

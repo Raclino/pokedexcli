@@ -27,7 +27,7 @@ func updateConfigFromResponse(config *pokeapi.LocationAreaConfig, resp *pokeapi.
 	}
 }
 
-func commandMap(config *pokeapi.LocationAreaConfig) error {
+func commandMap(config *pokeapi.LocationAreaConfig, args ...string) error {
 	resp, err := pokeapi.GetLocationAreas(client, cache, config.Next)
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func commandMap(config *pokeapi.LocationAreaConfig) error {
 	return nil
 }
 
-func commandMapb(config *pokeapi.LocationAreaConfig) error {
+func commandMapb(config *pokeapi.LocationAreaConfig, args ...string) error {
 	if config.Previous == "" {
 		fmt.Println("you're on the first page")
 		return nil
