@@ -7,6 +7,7 @@ import (
 	"github.com/Raclino/pokedexcli/internal/pokeapi"
 )
 
+// TODO: voir pour initialize le pokedex autre part / plus opti / logic
 var Pokedex = map[string]pokeapi.PokemonInfos{}
 
 func commandCatch(config *pokeapi.LocationAreaConfig, args ...string) error {

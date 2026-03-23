@@ -9,6 +9,7 @@ import (
 	"github.com/Raclino/pokedexcli/internal/pokecache"
 )
 
+// TODO: voir pour best practices archi sur où mettre les types
 type LocationAreaConfig struct {
 	Next     string
 	Previous string
@@ -375,6 +376,8 @@ type LocationAreaInfosResponse struct {
 
 const LocationsAreas string = "https://pokeapi.co/api/v2/location-area/"
 const PokemonUrl string = "https://pokeapi.co/api/v2/pokemon/"
+
+// TODO, voir pour refacto les differents call api qui sont similaire entres les fonctions ici
 
 func GetLocationAreas(client *http.Client, cache *pokecache.Cache, url string) (*LocationAreasResponse, error) {
 	var body []byte
