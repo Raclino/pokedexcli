@@ -20,7 +20,7 @@ func NewAppConfig(timeout, cacheInterval time.Duration) *AppConfig {
 		cache:  *pokecache.NewCache(cacheInterval),
 		client: &http.Client{Timeout: timeout},
 		locationAreaUrls: &pokeapi.LocationAreaUrls{
-			Next:     pokeapi.LocationsAreas,
+			Next:     pokeapi.LocationAreasURL,
 			Previous: "",
 		},
 		pokedex: make(map[string]pokeapi.PokemonInfos),

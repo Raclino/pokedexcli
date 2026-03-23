@@ -1,4 +1,4 @@
-main_package_path = .
+main_package_path = ./cmd/
 binary_name = pokedexcli
 
 ## help: print this help message
