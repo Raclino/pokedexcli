@@ -7,15 +7,12 @@ import (
 	"github.com/Raclino/pokedexcli/internal/pokeapi"
 )
 
-// TODO: voir pour initialize le pokedex autre part / plus opti / logic
-var Pokedex = map[string]pokeapi.PokemonInfos{}
-
-func commandCatch(config *pokeapi.LocationAreaConfig, args ...string) error {
+func commandCatch(appConfig *AppConfig, args ...string) error {
 
 	pokemonName := args[1]
 	fmt.Printf("Throwing a Pokeball at %s...\n", pokemonName)
 
-	resp, err := pokeapi.GetPokemonInfos(client, pokemonName)
+	resp, err := pokeapi.GetPokemonInfos(appConfig.client, pokemonName)
 	if err != nil {
 		return err
 	}
@@ -26,7 +23,7 @@ func commandCatch(config *pokeapi.LocationAreaConfig, args ...string) error {
 		return nil
 	}
 
-	Pokedex[pokemonName] = *resp
+	appConfig.pokedex[pokemonName] = *resp
 	fmt.Printf("%s was caught!\n", pokemonName)
 	fmt.Println("You may now inspect it with the inspect command.")
 	return nil
@@ -43,12 +40,12 @@ func tryCatchPokemon(baseExperience int) bool {
 		catchChance = 90
 	}
 
-	randomNumber := rand.Intn(100)
+	randomNumber := rand.Intn(95)
 
-	if randomNumber < catchChance {
-		return true
+	if randomNumber > catchChance {
+		return false
 
 	}
 
-	return false
+	return true
 }

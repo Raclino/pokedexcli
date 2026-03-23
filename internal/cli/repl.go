@@ -5,21 +5,18 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/Raclino/pokedexcli/internal/pokeapi"
+	"time"
 )
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(config *pokeapi.LocationAreaConfig, args ...string) error
+	callback    func(config *AppConfig, args ...string) error
 }
 
 func StartRepl() {
-	urlsConfig := &pokeapi.LocationAreaConfig{
-		Next:     pokeapi.LocationsAreas,
-		Previous: "",
-	}
+	appConfig := NewAppConfig(3*time.Second, 10*time.Second)
+
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -41,7 +38,7 @@ func StartRepl() {
 			continue
 		}
 
-		err := c.callback(urlsConfig, cleanedInput...)
+		err := c.callback(appConfig, cleanedInput...)
 		if err != nil {
 			fmt.Println(err)
 		}

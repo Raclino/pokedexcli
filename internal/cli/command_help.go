@@ -3,11 +3,9 @@ package cli
 import (
 	"fmt"
 	"slices"
-
-	"github.com/Raclino/pokedexcli/internal/pokeapi"
 )
 
-func commandHelp(config *pokeapi.LocationAreaConfig, args ...string) error {
+func commandHelp(appConfig *AppConfig, args ...string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage: ")
 

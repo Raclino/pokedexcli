@@ -10,7 +10,7 @@ import (
 )
 
 // TODO: voir pour best practices archi sur où mettre les types
-type LocationAreaConfig struct {
+type LocationAreaUrls struct {
 	Next     string
 	Previous string
 }

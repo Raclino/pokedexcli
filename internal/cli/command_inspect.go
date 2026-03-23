@@ -7,10 +7,10 @@ import (
 	"github.com/Raclino/pokedexcli/internal/pokeapi"
 )
 
-func commandInspect(config *pokeapi.LocationAreaConfig, args ...string) error {
+func commandInspect(appConfig *AppConfig, args ...string) error {
 	pokemonName := args[1]
 
-	p, ok := Pokedex[pokemonName]
+	p, ok := appConfig.pokedex[pokemonName]
 	if !ok {
 		fmt.Printf("%s is not in your Pokedex, catch him first for more informations\n", pokemonName)
 		return nil

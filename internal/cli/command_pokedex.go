@@ -2,15 +2,13 @@ package cli
 
 import (
 	"fmt"
-
-	"github.com/Raclino/pokedexcli/internal/pokeapi"
 )
 
-func commandPokedex(config *pokeapi.LocationAreaConfig, args ...string) error {
+func commandPokedex(appConfig *AppConfig, args ...string) error {
 
 	fmt.Println("Your Pokedex:")
 
-	for _, p := range Pokedex {
+	for _, p := range appConfig.pokedex {
 		fmt.Printf("  - %s\n", p.Name)
 	}
 	return nil

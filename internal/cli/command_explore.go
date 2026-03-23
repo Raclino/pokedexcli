@@ -6,11 +6,11 @@ import (
 	"github.com/Raclino/pokedexcli/internal/pokeapi"
 )
 
-func commandExplore(config *pokeapi.LocationAreaConfig, args ...string) error {
+func commandExplore(appConfig *AppConfig, args ...string) error {
 	locationArea := args[1]
 	fmt.Printf("Exploring %s...\n", locationArea)
 
-	resp, err := pokeapi.GetLocationAreaInfos(client, cache, locationArea)
+	resp, err := pokeapi.GetLocationAreaInfos(appConfig.client, &appConfig.cache, locationArea)
 	if err != nil {
 		return err
 	}
