@@ -374,8 +374,9 @@ type LocationAreaInfosResponse struct {
 	PokemonEncounters []PokemonEncounters `json:"pokemon_encounters"`
 }
 
-const LocationsAreas string = "https://pokeapi.co/api/v2/location-area/"
-const PokemonUrl string = "https://pokeapi.co/api/v2/pokemon/"
+const pokeApiBaseURL string = "https://pokeapi.co/api/v2/"
+const LocationsAreas string = pokeApiBaseURL + "location-area/"
+const PokemonUrl string = pokeApiBaseURL + "pokemon/"
 
 // TODO, voir pour refacto les differents call api qui sont similaire entres les fonctions ici
 

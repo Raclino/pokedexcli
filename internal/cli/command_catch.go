@@ -19,10 +19,8 @@ func commandCatch(config *pokeapi.LocationAreaConfig, args ...string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("baseExperience: ", resp.BaseExperience)
 
 	isCaught := tryCatchPokemon(resp.BaseExperience)
-	fmt.Println(isCaught)
 	if !isCaught {
 		fmt.Printf("%s escaped!\n", pokemonName)
 		return nil
@@ -30,6 +28,7 @@ func commandCatch(config *pokeapi.LocationAreaConfig, args ...string) error {
 
 	Pokedex[pokemonName] = *resp
 	fmt.Printf("%s was caught!\n", pokemonName)
+	fmt.Println("You may now inspect it with the inspect command.")
 	return nil
 }
 

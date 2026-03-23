@@ -9,8 +9,7 @@ import (
 
 func commandHelp(config *pokeapi.LocationAreaConfig, args ...string) error {
 	fmt.Println("Welcome to the Pokedex!")
-	fmt.Println("Usage:")
-	fmt.Println()
+	fmt.Println("Usage: ")
 
 	commandNames := make([]string, 0, len(getCommands()))
 	for name := range getCommands() {
